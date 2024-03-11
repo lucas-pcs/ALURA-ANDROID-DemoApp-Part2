@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import br.com.alura.orgs.database.AppDatabase
 import br.com.alura.orgs.databinding.ActivityFormularioCadastroUsuarioBinding
 import br.com.alura.orgs.extensions.toHash
+import br.com.alura.orgs.extensions.toast
 import br.com.alura.orgs.model.Usuario
 import kotlinx.coroutines.launch
 
@@ -34,8 +35,7 @@ class FormularioCadastroUsuarioActivity : AppCompatActivity() {
                     usuarioDao.salva(novoUsuario)
                 } catch (e: Exception) {
                     Log.e("CadastroUsuario", "configuraBotaoCadastrar: " + e.printStackTrace())
-                    Toast.makeText(this@FormularioCadastroUsuarioActivity, "Erro ao cadastrar novo usuário", Toast.LENGTH_SHORT)
-                        .show()
+                    toast("Erro ao cadastrar novo usuário")
                 }
             }
             finish()

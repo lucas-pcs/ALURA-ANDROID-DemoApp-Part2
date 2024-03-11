@@ -14,8 +14,11 @@ import br.com.alura.orgs.database.AppDatabase
 import br.com.alura.orgs.database.preferences.dataStore
 import br.com.alura.orgs.database.preferences.usuarioLogadoPreference
 import br.com.alura.orgs.databinding.ActivityListaProdutosActivityBinding
+import br.com.alura.orgs.extensions.toast
 import br.com.alura.orgs.extensions.vaiPara
 import br.com.alura.orgs.ui.recyclerview.adapter.ListaProdutosAdapter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 
@@ -38,27 +41,32 @@ class ListaProdutosActivity : AppCompatActivity() {
         setContentView(binding.root)
         configuraRecyclerView()
         configuraFab()
+
+        verificaUsuarioLogado()
+
+    }
+
+    private fun verificaUsuarioLogado() {
         lifecycleScope.launch {
-            launch {
+            dataStore.data.collect { preferences ->
+                preferences[usuarioLogadoPreference]?.let { usuarioID ->
+                    buscaListaDoUsuario(usuarioID)
+                } ?: vaiParaLogin()
+            }
+        }
+    }
+
+    private suspend fun buscaListaDoUsuario(usuarioID: String) {
+        val usuario = usuarioDAO.buscaPorId(usuarioID).firstOrNull()
+
+        usuario?.let {
+            lifecycleScope.launch {
                 produtoDAO.buscaTodos().collect { produtos ->
                     adapter.atualiza(produtos)
                 }
             }
+        } ?: toast("Usuário não encontrado")
 
-            dataStore.data.collect { preferences ->
-                preferences[usuarioLogadoPreference]?.let { usuarioID ->
-                    usuarioDAO.buscaPorId(usuarioID).collect { usuario ->
-                        usuario?.let {
-                            Log.d("ListaProdutos", "onCreate: $it")
-                        } ?: Toast.makeText(
-                            this@ListaProdutosActivity,
-                            "Usuário não encontrado",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                } ?: vaiParaLogin()
-            }
-        }
     }
 
     private fun vaiParaLogin() {
@@ -73,18 +81,19 @@ class ListaProdutosActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_lista_produtos_sair_do_app -> {
-                lifecycleScope.launch {
-                    dataStore.edit { preferences ->
-                        preferences.remove(usuarioLogadoPreference)
-                    }
-                    vaiParaLogin()
-                }
-            }
-
+            R.id.menu_lista_produtos_sair_do_app -> { desloga() }
             else -> {}
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun desloga() {
+        lifecycleScope.launch {
+            dataStore.edit { preferences ->
+                preferences.remove(usuarioLogadoPreference)
+            }
+            vaiParaLogin()
+        }
     }
 
     private fun configuraFab() {

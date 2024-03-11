@@ -11,6 +11,7 @@ import br.com.alura.orgs.database.preferences.dataStore
 import br.com.alura.orgs.database.preferences.usuarioLogadoPreference
 import br.com.alura.orgs.databinding.ActivityLoginBinding
 import br.com.alura.orgs.extensions.toHash
+import br.com.alura.orgs.extensions.toast
 import br.com.alura.orgs.extensions.vaiPara
 import kotlinx.coroutines.launch
 
@@ -35,24 +36,22 @@ class LoginActivity : AppCompatActivity() {
         binding.activityLoginBotaoEntrar.setOnClickListener {
             val usuario = binding.activityLoginUsuario.text.toString()
             val senha = binding.activityLoginSenha.text.toString().toHash()
-            Log.i("LoginActivity", "onCreate: $usuario - $senha")
+            autentica(usuario, senha)
+        }
+    }
 
-            lifecycleScope.launch {
-                usuarioDAO.autentica(usuario, senha)?.let { usuario ->
-                    vaiPara(ListaProdutosActivity::class.java){
-                        launch {
-                            dataStore.edit { preferencias ->
-                                preferencias[usuarioLogadoPreference] = usuario.id
-                            }
+    private fun autentica(usuario: String, senha: String) {
+        lifecycleScope.launch {
+            usuarioDAO.autentica(usuario, senha)?.let { usuario ->
+                vaiPara(ListaProdutosActivity::class.java) {
+                    launch {
+                        dataStore.edit { preferencias ->
+                            preferencias[usuarioLogadoPreference] = usuario.id
                         }
-                        finish()
                     }
-                } ?: Toast.makeText(
-                    this@LoginActivity,
-                    "Falha na autenticação",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+                    finish()
+                }
+            } ?: toast("Falha na autenticação")
         }
     }
 
