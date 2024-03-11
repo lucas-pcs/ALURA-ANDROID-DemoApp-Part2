@@ -10,6 +10,7 @@ import br.com.alura.orgs.database.AppDatabase
 import br.com.alura.orgs.database.preferences.dataStore
 import br.com.alura.orgs.database.preferences.usuarioLogado
 import br.com.alura.orgs.databinding.ActivityLoginBinding
+import br.com.alura.orgs.extensions.toHash
 import br.com.alura.orgs.extensions.vaiPara
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -35,7 +36,7 @@ class LoginActivity : AppCompatActivity() {
     private fun configuraBotaoEntrar() {
         binding.activityLoginBotaoEntrar.setOnClickListener {
             val usuario = binding.activityLoginUsuario.text.toString()
-            val senha = binding.activityLoginSenha.text.toString()
+            val senha = binding.activityLoginSenha.text.toString().toHash()
             Log.i("LoginActivity", "onCreate: $usuario - $senha")
 
             lifecycleScope.launch {
