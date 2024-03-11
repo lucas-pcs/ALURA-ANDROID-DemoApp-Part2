@@ -8,13 +8,11 @@ import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.lifecycleScope
 import br.com.alura.orgs.database.AppDatabase
 import br.com.alura.orgs.database.preferences.dataStore
-import br.com.alura.orgs.database.preferences.usuarioLogado
+import br.com.alura.orgs.database.preferences.usuarioLogadoPreference
 import br.com.alura.orgs.databinding.ActivityLoginBinding
 import br.com.alura.orgs.extensions.toHash
 import br.com.alura.orgs.extensions.vaiPara
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class LoginActivity : AppCompatActivity() {
 
@@ -42,12 +40,12 @@ class LoginActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 usuarioDAO.autentica(usuario, senha)?.let { usuario ->
                     vaiPara(ListaProdutosActivity::class.java){
-                        //putExtra("CHAVE_USUARIO_ID", usuario.id)
                         launch {
                             dataStore.edit { preferencias ->
-                                preferencias[usuarioLogado] = usuario.id
+                                preferencias[usuarioLogadoPreference] = usuario.id
                             }
                         }
+                        finish()
                     }
                 } ?: Toast.makeText(
                     this@LoginActivity,

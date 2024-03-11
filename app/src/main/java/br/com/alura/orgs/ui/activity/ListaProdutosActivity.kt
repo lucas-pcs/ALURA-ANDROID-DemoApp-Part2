@@ -3,13 +3,18 @@ package br.com.alura.orgs.ui.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.lifecycleScope
+import br.com.alura.orgs.R
 import br.com.alura.orgs.database.AppDatabase
 import br.com.alura.orgs.database.preferences.dataStore
-import br.com.alura.orgs.database.preferences.usuarioLogado
+import br.com.alura.orgs.database.preferences.usuarioLogadoPreference
 import br.com.alura.orgs.databinding.ActivityListaProdutosActivityBinding
+import br.com.alura.orgs.extensions.vaiPara
 import br.com.alura.orgs.ui.recyclerview.adapter.ListaProdutosAdapter
 import kotlinx.coroutines.launch
 
@@ -40,27 +45,46 @@ class ListaProdutosActivity : AppCompatActivity() {
                 }
             }
 
-//            intent.getStringExtra("CHAVE_USUARIO_ID")?.let {usuarioID ->
-//                usuarioDAO.buscaPorId(usuarioID).collect{
-//                        Log.d("ListaProdutos", "onCreate: $it")
-//                    }
-//            } ?: Toast.makeText(this@ListaProdutosActivity, "ID do usuário não encontrado", Toast.LENGTH_SHORT).show()
-
             dataStore.data.collect { preferences ->
-                preferences[usuarioLogado]?.let { usuarioID ->
+                preferences[usuarioLogadoPreference]?.let { usuarioID ->
                     usuarioDAO.buscaPorId(usuarioID).collect { usuario ->
                         usuario?.let {
                             Log.d("ListaProdutos", "onCreate: $it")
                         } ?: Toast.makeText(
                             this@ListaProdutosActivity,
-                            "ID do usuário não encontrado",
+                            "Usuário não encontrado",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
+                } ?: vaiParaLogin()
+            }
+        }
+    }
+
+    private fun vaiParaLogin() {
+        vaiPara(LoginActivity::class.java)
+        finish()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_lista_produtos, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_lista_produtos_sair_do_app -> {
+                lifecycleScope.launch {
+                    dataStore.edit { preferences ->
+                        preferences.remove(usuarioLogadoPreference)
+                    }
+                    vaiParaLogin()
                 }
             }
 
+            else -> {}
         }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun configuraFab() {

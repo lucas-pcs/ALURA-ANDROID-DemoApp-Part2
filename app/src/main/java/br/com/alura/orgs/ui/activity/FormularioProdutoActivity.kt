@@ -7,12 +7,11 @@ import androidx.lifecycle.lifecycleScope
 import br.com.alura.orgs.database.AppDatabase
 import br.com.alura.orgs.database.dao.ProdutoDao
 import br.com.alura.orgs.database.preferences.dataStore
-import br.com.alura.orgs.database.preferences.usuarioLogado
+import br.com.alura.orgs.database.preferences.usuarioLogadoPreference
 import br.com.alura.orgs.databinding.ActivityFormularioProdutoBinding
 import br.com.alura.orgs.extensions.tentaCarregarImagem
 import br.com.alura.orgs.model.Produto
 import br.com.alura.orgs.ui.dialog.FormularioImagemDialog
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
@@ -46,7 +45,7 @@ class FormularioProdutoActivity : AppCompatActivity() {
         tentaCarregarProduto()
         lifecycleScope.launch {
             dataStore.data.collect {preferences ->
-                preferences[usuarioLogado]?.let {usuarioId ->
+                preferences[usuarioLogadoPreference]?.let { usuarioId ->
                     usuarioDAO.buscaPorId(usuarioId).collect {usuario ->
                         usuario?.let {
                             Log.d("FormularioProduto", "onCreate: $it")
