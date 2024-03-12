@@ -12,10 +12,11 @@ import br.com.alura.orgs.databinding.ActivityFormularioProdutoBinding
 import br.com.alura.orgs.extensions.tentaCarregarImagem
 import br.com.alura.orgs.model.Produto
 import br.com.alura.orgs.ui.dialog.FormularioImagemDialog
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
-class FormularioProdutoActivity : AppCompatActivity() {
+class FormularioProdutoActivity : UsuarioBaseActivity() {
 
     private val binding by lazy {
         ActivityFormularioProdutoBinding.inflate(layoutInflater)
@@ -35,24 +36,37 @@ class FormularioProdutoActivity : AppCompatActivity() {
         setContentView(binding.root)
         title = "Cadastrar produto"
         configuraBotaoSalvar()
+        configuraImagemClick()
+        tentaCarregarProduto()
+
+        lifecycleScope.launch {
+
+//            dataStore.data.collect {preferences ->
+//                preferences[usuarioLogadoPreference]?.let { usuarioId ->
+//                    usuarioDAO.buscaPorId(usuarioId).collect {usuario ->
+//                        usuario?.let {
+//                            Log.d("FormularioProduto", "onCreate: $it")
+//                        }
+//                    }
+//                }
+//            }
+
+            usuario
+                .filterNotNull()
+                .collect {
+                    Log.d("FormularioProduto", "onCreate: $it")
+                }
+
+        }
+    }
+
+    private fun configuraImagemClick() {
         binding.activityFormularioProdutoImagem.setOnClickListener {
             FormularioImagemDialog(this)
                 .mostra(url) { imagem ->
                     url = imagem
                     binding.activityFormularioProdutoImagem.tentaCarregarImagem(url)
                 }
-        }
-        tentaCarregarProduto()
-        lifecycleScope.launch {
-            dataStore.data.collect {preferences ->
-                preferences[usuarioLogadoPreference]?.let { usuarioId ->
-                    usuarioDAO.buscaPorId(usuarioId).collect {usuario ->
-                        usuario?.let {
-                            Log.d("FormularioProduto", "onCreate: $it")
-                        }
-                    }
-                }
-            }
         }
     }
 
