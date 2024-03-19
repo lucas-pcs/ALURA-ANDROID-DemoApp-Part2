@@ -8,4 +8,10 @@
         app:showAsAction="ifRoom"
         android:icon="@drawable/ic_action_exit_app"/>
 
+    <item
+        android:id="@+id/menu_lista_produtos_perfil_do_usuario"
+        android:title="Perfil do Usuário"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_user_profile"/>
+
 </menu>

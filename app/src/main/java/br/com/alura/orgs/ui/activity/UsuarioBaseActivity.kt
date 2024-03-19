@@ -25,7 +25,7 @@ abstract class UsuarioBaseActivity : AppCompatActivity() {
     private val usuarioDAO by lazy {
         AppDatabase.instancia(this).usuarioDao()
     }
-    
+
     private var _usuario: MutableStateFlow<Usuario?> = MutableStateFlow(null)
     protected var usuario: StateFlow<Usuario?> = _usuario
 

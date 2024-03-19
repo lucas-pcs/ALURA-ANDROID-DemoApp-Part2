@@ -66,6 +66,9 @@ class ListaProdutosActivity : UsuarioBaseActivity() {
             R.id.menu_lista_produtos_sair_do_app -> {
                 desloga()
             }
+            R.id.menu_lista_produtos_perfil_do_usuario -> {
+                vaiPara(PerfilUsuarioActivity::class.java)
+            }
 
             else -> {}
         }
