@@ -16,7 +16,7 @@ import br.com.alura.orgs.model.Usuario
         Produto::class,
         Usuario::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -35,7 +35,8 @@ abstract class AppDatabase : RoomDatabase() {
                 "orgs.db"
             ).addMigrations(
                 MIGRATION_1_2,
-                MIGRATION_2_3)
+                MIGRATION_2_3,
+                MIGRATION_3_4)
                 .build().also {
                 db = it
             }

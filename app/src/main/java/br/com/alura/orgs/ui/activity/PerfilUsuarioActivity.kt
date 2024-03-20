@@ -32,6 +32,10 @@ class PerfilUsuarioActivity : UsuarioBaseActivity() {
             }
         }
 
+        perfilUsuarioBinding.activityPerfilUsuarioIcone.setOnClickListener {
+
+        }
+
         perfilUsuarioBinding.activityPerfilUsuarioButtonLogout.setOnClickListener {
             desloga()
         }

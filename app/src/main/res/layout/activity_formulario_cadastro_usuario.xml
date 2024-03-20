@@ -11,6 +11,16 @@
         android:layout_height="wrap_content"
         tools:context=".ui.activity.FormularioCadastroUsuarioActivity">
 
+        <ImageView
+            android:id="@+id/activity_formulario_cadastro_usuario_icone"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/placeholder_user_profile" />
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textInputLayout_usuario"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -19,7 +29,7 @@
             android:layout_margin="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/activity_formulario_cadastro_usuario_icone">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/activity_formulario_cadastro_usuario"

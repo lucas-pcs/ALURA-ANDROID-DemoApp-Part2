@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import br.com.alura.orgs.database.AppDatabase
 import br.com.alura.orgs.databinding.UsuarioItemBinding
 import br.com.alura.orgs.model.Usuario
+import coil.load
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.filterNotNull
@@ -37,6 +38,7 @@ class UsuariosAdapter(
         fun vincula(usuario: Usuario) {
             binding.usuarioItemNome.text = usuario.nome
             binding.usuarioItemId.text = usuario.id
+            binding.usuarioItemIcone.load(usuario.icone)
 
             CoroutineScope(Dispatchers.Main).launch {
                 produtoDAO.buscaProdutosPorUsuario(usuario.id).collect{listaDeProdutosDoUsuario ->
