@@ -14,4 +14,9 @@
         app:showAsAction="ifRoom"
         android:icon="@drawable/ic_action_user_profile"/>
 
+    <item
+        android:id="@+id/menu_lista_produtos_todos_produtos"
+        android:title="Todos os produtos"
+        app:showAsAction="collapseActionView" />
+
 </menu>

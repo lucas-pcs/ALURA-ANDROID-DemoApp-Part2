@@ -25,6 +25,7 @@ class FormularioCadastroUsuarioActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         configuraBotaoCadastrar()
+
     }
 
     private fun configuraBotaoCadastrar() {

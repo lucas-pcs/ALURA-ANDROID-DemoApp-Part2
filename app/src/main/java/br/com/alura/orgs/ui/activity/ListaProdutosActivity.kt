@@ -2,36 +2,32 @@ package br.com.alura.orgs.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.lifecycleScope
 import br.com.alura.orgs.R
 import br.com.alura.orgs.database.AppDatabase
-import br.com.alura.orgs.database.preferences.dataStore
-import br.com.alura.orgs.database.preferences.usuarioLogadoPreference
 import br.com.alura.orgs.databinding.ActivityListaProdutosActivityBinding
-import br.com.alura.orgs.extensions.toast
 import br.com.alura.orgs.extensions.vaiPara
+import br.com.alura.orgs.model.Usuario
 import br.com.alura.orgs.ui.recyclerview.adapter.ListaProdutosAdapter
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 
 class ListaProdutosActivity : UsuarioBaseActivity() {
 
-    private val adapter = ListaProdutosAdapter(context = this)
+    private val listaProdutosAdapter = ListaProdutosAdapter(context = this)
     private val binding by lazy {
         ActivityListaProdutosActivityBinding.inflate(layoutInflater)
     }
     private val produtoDAO by lazy {
         val db = AppDatabase.instancia(this)
         db.produtoDao()
+    }
+
+    private val usuarioDAO by lazy {
+        AppDatabase.instancia(this).usuarioDao()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,15 +39,16 @@ class ListaProdutosActivity : UsuarioBaseActivity() {
         lifecycleScope.launch {
             usuario
                 .filterNotNull()
-                .collect {usuario ->
+                .collect { usuario ->
                     buscaProdutosUsuario(usuario.id)
                 }
         }
+
     }
 
     private suspend fun buscaProdutosUsuario(usuarioId: String) {
         produtoDAO.buscaProdutosPorUsuario(usuarioId).collect { produtos ->
-            adapter.atualiza(produtos)
+            listaProdutosAdapter.atualiza(produtos)
         }
     }
 
@@ -65,8 +62,13 @@ class ListaProdutosActivity : UsuarioBaseActivity() {
             R.id.menu_lista_produtos_sair_do_app -> {
                 desloga()
             }
+
             R.id.menu_lista_produtos_perfil_do_usuario -> {
                 vaiPara(PerfilUsuarioActivity::class.java)
+            }
+
+            R.id.menu_lista_produtos_todos_produtos -> {
+                vaiPara(ListaTodosProdutosActivity::class.java)
             }
 
             else -> {}
@@ -88,8 +90,8 @@ class ListaProdutosActivity : UsuarioBaseActivity() {
 
     private fun configuraRecyclerView() {
         val recyclerView = binding.activityListaProdutosRecyclerView
-        recyclerView.adapter = adapter
-        adapter.quandoClicaNoItem = {
+        recyclerView.adapter = listaProdutosAdapter
+        listaProdutosAdapter.quandoClicaNoItem = {
             val intent = Intent(
                 this,
                 DetalhesProdutoActivity::class.java
