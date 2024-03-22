@@ -12,6 +12,7 @@ import br.com.alura.orgs.databinding.ActivityPerfilUsuarioBinding
 import br.com.alura.orgs.extensions.tentaCarregarImagem
 import br.com.alura.orgs.model.Usuario
 import br.com.alura.orgs.ui.dialog.FormularioImagemDialog
+import coil.load
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.system.exitProcess
@@ -31,18 +32,6 @@ class PerfilUsuarioActivity : UsuarioBaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(perfilUsuarioBinding.root)
 
-        lifecycleScope.launch {
-            usuario.collect {
-                it?.let { usuario ->
-                    with(perfilUsuarioBinding) {
-                        this.activityPerfilUsuarioName.text = usuario.nome
-                        this.activityPerfilUsuarioId.text = "ID: ${usuario.id}"
-                        configureIconClickListener(usuario)
-                    }
-                }
-            }
-        }
-
         perfilUsuarioBinding.activityPerfilUsuarioButtonLogout.setOnClickListener {
             desloga()
         }
@@ -51,6 +40,22 @@ class PerfilUsuarioActivity : UsuarioBaseActivity() {
             finishAffinity();
             System.exit(0);
         }
+
+        lifecycleScope.launch {
+            usuario.collect { usuario ->
+                usuario?.let { usuario ->
+                    with(perfilUsuarioBinding) {
+                        this.activityPerfilUsuarioName.text = usuario.nome
+                        this.activityPerfilUsuarioId.text = "ID: ${usuario.id}"
+                        usuario.icone?.let { this.activityPerfilUsuarioIcone.load(usuario.icone) }
+                            ?: this.activityPerfilUsuarioIcone.load(R.drawable.ic_action_user_profile)
+                        url = usuario.icone
+                    }
+                    configureIconClickListener(usuario)
+                }
+            }
+        }
+
     }
 
     private suspend fun configureIconClickListener(usuario: Usuario) {
